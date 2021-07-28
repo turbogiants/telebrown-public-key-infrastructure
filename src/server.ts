@@ -5,7 +5,7 @@ import logging from './config/logging';
 import config from './config/config';
 
 // route import
-import sampleRoutes from './routes/sample';
+import keyRoutes from './routes/keyRoutes';
 //import keyRoutes from './r'
 
 const NAMESPACE = 'Server';
@@ -55,7 +55,7 @@ app.use((req, res, next) => {
 });
 
 /** Routes */
-app.use('/sample', sampleRoutes);
+app.use('/api/key', keyRoutes);
 
 /** Error handling */
 app.use((req, res, next) => {
