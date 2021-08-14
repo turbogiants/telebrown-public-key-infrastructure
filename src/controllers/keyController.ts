@@ -34,7 +34,7 @@ const postKey = (req: Request, res: Response, next: NextFunction) => {
         .save()
         .then((result) => {
             return res.status(201).json({
-                book: result
+                key: result
             });
         })
         .catch((error) => {
