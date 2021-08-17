@@ -1,11 +1,10 @@
-import http from 'http';
 import express from 'express';
 import mongoose from 'mongoose';
 import logging from './config/logging';
 import config from './config/config';
 
 // route import
-import keyRoutes from './routes/keyRoutes';
+import keyRoutes from './routes/userRoutes';
 //import keyRoutes from './r'
 
 const NAMESPACE = 'Server';
@@ -55,7 +54,7 @@ app.use((req, res, next) => {
 });
 
 /** Routes */
-app.use('/api/key', keyRoutes);
+app.use('/api/debug', keyRoutes);
 
 /** Error handling */
 app.use((req, res, next) => {
