@@ -26,14 +26,14 @@ const getUser = (req: Request, res: Response, next: NextFunction) => {
 const postUser = async (req: Request, res: Response, next: NextFunction) => {
     const { _id, firstname, lastname } = req.body;
 
-    const newKey = new User({
+    const newUser = new User({
         _id, 
         firstname, 
         lastname
     });
 
     try {
-        const result = newKey
+        const result = newUser
             .save(function (err) {
                 if (err)throw err;
             });
