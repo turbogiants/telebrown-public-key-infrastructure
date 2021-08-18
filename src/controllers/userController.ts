@@ -10,15 +10,19 @@ const getUser = (req: Request, res: Response, next: NextFunction) => {
                 throw new Error('This user does not exist in the database');
             }
             return res.status(200).json({
-                id: results._id,
-                username: results.firstname,
-                lastname: results.lastname
+                statusCode: 200,
+                data: {
+                    id: results._id,
+                    username: results.firstname,
+                    lastname: results.lastname
+                },
+                message: "User exist."
             });
         })
         .catch((error) => {
             return res.status(500).json({
-                message: error.message,
-                error
+                statusCode: 500,
+                message: error.message
             });
         });
 };
