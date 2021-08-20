@@ -1,7 +1,7 @@
-import mongoose, { Schema } from 'mongoose';
-import IUSer from '../interfaces/userInterfaces';
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const User: Schema = new Schema(
+const User = new Schema(
     {
         _id: { type: String, required: true },
         firstname: { type: String, required: true },
@@ -12,4 +12,4 @@ const User: Schema = new Schema(
     }
 );
 
-export default mongoose.model<IUSer>('User', User);
+module.exports = mongoose.model('User', User);

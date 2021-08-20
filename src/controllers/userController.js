@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import User from '../models/userModel';
+const User = require('../models/userModel');
 
 const NAMESPACE = 'User Controller';
-const getUser = (req: Request, res: Response, next: NextFunction) => {
+const getUser = (req, res, next) => {
     User.findOne({ _id: req.params.id })
         .exec()
         .then((results) => {
@@ -23,20 +22,19 @@ const getUser = (req: Request, res: Response, next: NextFunction) => {
         });
 };
 
-const postUser = async (req: Request, res: Response, next: NextFunction) => {
+const postUser = async (req, res, next) => {
     const { _id, firstname, lastname } = req.body;
 
     const newKey = new User({
-        _id, 
-        firstname, 
+        _id,
+        firstname,
         lastname
     });
 
     try {
-        const result = newKey
-            .save(function (err) {
-                if (err)throw err;
-            });
+        const result = newKey.save(function (err) {
+            if (err) throw err;
+        });
         return res.status(201).json({
             data: result,
             success: true
@@ -49,4 +47,4 @@ const postUser = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-export default { getUser, postUser };
+module.exports = { getUser, postUser };

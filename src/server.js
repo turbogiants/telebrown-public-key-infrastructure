@@ -1,11 +1,10 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import logging from './config/logging';
-import config from './config/config';
+const express = require('express');
+const mongoose = require('mongoose');
+const logging = require('./config/logging');
+const config = require('./config/config');
 
 // route import
-import keyRoutes from './routes/userRoutes';
-//import keyRoutes from './r'
+const userRoutes =  require('./routes/userRoutes');
 
 const NAMESPACE = 'Server';
 const app = express();
@@ -54,7 +53,7 @@ app.use((req, res, next) => {
 });
 
 /** Routes */
-app.use('/api/debug', keyRoutes);
+app.use('/api/debug', userRoutes);
 
 /** Error handling */
 app.use((req, res, next) => {
@@ -69,4 +68,4 @@ app.use((req, res, next) => {
 
 app.listen(config.server.port, () => logging.info(NAMESPACE, `Server running on ${config.server.hostname}:${config.server.port}`));
 
-export default app;
+module.exports = app;
