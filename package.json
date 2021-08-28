@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rm -rf build/ && prettier --write src/ && tsc",
     "start": "nodemon src/server.js",
-    "test": "jest --watchAll"
+    "test": "jest --detectOpenHandles"
   },
   "author": "Aevan Candelaria",
   "license": "Apache-2.0",
@@ -16,7 +16,7 @@
     "mongoose": "^5.13.3"
   },
   "devDependencies": {
-    "jest": "^27.0.6",
-    "supertest": "^6.1.4"
+    "jest": "^27.1.0",
+    "supertest": "^6.1.6"
   }
 }

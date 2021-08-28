@@ -1,10 +1,16 @@
 const express = require('express');
-const controller = require('../controllers/userController');
+const createUserController = require('../controllers/userController');
 
-const router = express.Router();
+/** Use a function to implement dependency injection */
+const createUserRoutes = (database) => {
+    const controller = createUserController(database);
+    const router = express.Router();
 
-router.post('/create', controller.postUser);
+    router.post('/create', controller.postUser);
 
-router.get('/user/:id', controller.getUser);
+    router.get('/user/:id', controller.getUser);
 
-module.exports = router;
+    return router;
+};
+
+module.exports = createUserRoutes;

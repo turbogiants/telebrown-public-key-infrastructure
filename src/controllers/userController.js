@@ -1,50 +1,52 @@
 const User = require('../models/userModel');
+const logging = require('../config/logging');
 
 const NAMESPACE = 'User Controller';
-const getUser = (req, res, next) => {
-    User.findOne({ _id: req.params.id })
-        .exec()
-        .then((results) => {
-            if (results == null) {
+
+/** Use a function that returns a controller for dependency injections */
+const createUserController = (database) => {
+    const getUser = async (req, res, next) => {
+        try {
+            const user = await database.getUser(req.params.id);
+
+            if (!user) {
                 throw new Error('This user does not exist in the database');
             }
-            return res.status(200).json({
-                id: results._id,
-                username: results.firstname,
-                lastname: results.lastname
-            });
-        })
-        .catch((error) => {
+
+            return res.status(200).json(user);
+        } catch (error) {
+            logging.error(NAMESPACE, 'caught error', error);
             return res.status(500).json({
                 message: error.message,
                 error
             });
-        });
+        }
+    };
+
+    const postUser = async (req, res, next) => {
+        const { _id, firstname, lastname } = req.body;
+
+        const newUser = {
+            _id,
+            firstname,
+            lastname
+        };
+
+        try {
+            const result = await database.createUser(newUser);
+            return res.status(201).json(result);
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                error
+            });
+        }
+    };
+
+    return {
+        getUser,
+        postUser
+    };
 };
 
-const postUser = async (req, res, next) => {
-    const { _id, firstname, lastname } = req.body;
-
-    const newKey = new User({
-        _id,
-        firstname,
-        lastname
-    });
-
-    try {
-        const result = newKey.save(function (err) {
-            if (err) throw err;
-        });
-        return res.status(201).json({
-            data: result,
-            success: true
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            error
-        });
-    }
-};
-
-module.exports = { getUser, postUser };
+module.exports = createUserController;
