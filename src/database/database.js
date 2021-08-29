@@ -37,14 +37,24 @@ const createUser = async (user) => {
             if (err) throw err;
         });
         return {
-            data: newUser,
-            success: true
+            success: true,
+            data: newUser
         };
     } catch (error) {
+        logging.error(NAMESPACE, 'caught error', error);
         throw error;
     }
 };
+
+/** Returns true if id already exists in the collection */
+const idExists = async (id) => {
+    const exists = await User.exists({ _id: id });
+    logging.info(NAMESPACE, 'exists var', exists);
+
+    return exists;
+};
 module.exports = {
     getUser,
-    createUser
+    createUser,
+    idExists
 };

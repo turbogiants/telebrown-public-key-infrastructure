@@ -33,11 +33,19 @@ const createUserController = (database) => {
         };
 
         try {
+            // determine if id already exists in the database
+            const exists = await database.idExists(_id);
+            logging.info(NAMESPACE, 'exists boolean var', exists);
+            if (exists) {
+                throw new Error('ID already exists in the database');
+            }
+            // save the document to the database
             const result = await database.createUser(newUser);
             return res.status(201).json(result);
         } catch (error) {
             return res.status(500).json({
                 success: false,
+                message: error.message,
                 error
             });
         }

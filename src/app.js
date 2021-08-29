@@ -44,7 +44,7 @@ const createApp = (database) => {
 
     /** Error handling */
     app.use((req, res, next) => {
-        const error = new Error('Not found');
+        const error = new Error('Not found lol');
 
         return res.status(404).json({
             message: error.message
