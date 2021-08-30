@@ -8,10 +8,11 @@ const NAMESPACE = 'Database';
 /** connect to mongo db */
 
 // dont connect to mongo if dot env doesn't exist
-if (config.mongo.host != 'none') {
+if (config.mongo.host !== 'none') {
+    mongoose.set('useFindAndModify', false);
     mongoose
         .connect(config.mongo.url, config.mongo.options)
-        .then((result) => {
+        .then(() => {
             logging.info(NAMESPACE, 'Mongo Connected');
         })
         .catch((error) => {
