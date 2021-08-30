@@ -1,13 +1,11 @@
-const User = require('../models/userModel');
 const logging = require('../config/logging');
-
 const NAMESPACE = 'User Controller';
 
 /** Use a function that returns a controller for dependency injections */
-const createUserController = (database) => {
-    const getUser = async (req, res, next) => {
+const createUserController = (User) => {
+    const getUser = async (req, res) => {
         try {
-            const user = await database.getUser(req.params.id);
+            const user = await User.getUser(req.params.id);
 
             if (!user) {
                 throw new Error('This user does not exist in the database');
@@ -23,7 +21,7 @@ const createUserController = (database) => {
         }
     };
 
-    const postUser = async (req, res, next) => {
+    const postUser = async (req, res) => {
         const { _id, firstname, lastname } = req.body;
 
         const newUser = {
