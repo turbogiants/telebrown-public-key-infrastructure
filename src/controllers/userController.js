@@ -11,7 +11,15 @@ const createUserController = (database) => {
                 throw new Error('This user does not exist in the database');
             }
 
-            return emitResponse(res, 'Query Success', user);
+            return res.status(201).json({
+                success: true,
+                message: 'Query Success',
+                data: {
+                    id: user._id,
+                    firstname: user.firstname,
+                    lastname: user.lastname
+                }
+            });
         } catch (error) {
             logging.error(NAMESPACE, 'caught error', error);
             return res.status(500).json({
@@ -36,11 +44,30 @@ const createUserController = (database) => {
             const isExist = await database.idExists(_id);
             if (isExist) {
                 const result = await database.updateExisting(_id, req);
-                return emitResponse(res, 'User updated successfully', result);
+                return res.status(201).json({
+                    success: true,
+                    message: 'User updated successfully',
+                    data: {
+                        id: result._id,
+                        firstname: result.firstname,
+                        lastname: result.lastname
+                    }
+                });
             }
             // save the document to the database
             const result = await database.createUser(newUser);
-            return emitResponse(res, 'User created successfully', result.data);
+
+            logging.debug(NAMESPACE, 'db res: ', result);
+            const data = result.data;
+            return res.status(201).json({
+                success: result.success,
+                message: 'User created successfully',
+                data: {
+                    id: data._id,
+                    firstname: data.firstname,
+                    lastname: data.lastname
+                }
+            });
         } catch (error) {
             return res.status(500).json({
                 success: false,
@@ -54,18 +81,6 @@ const createUserController = (database) => {
         getUser,
         postUser
     };
-};
-
-const emitResponse = (res, message, result) => {
-    return res.status(201).json({
-        success: true,
-        message: message,
-        data: {
-            id: result._id,
-            firstname: result.firstname,
-            lastname: result.lastname
-        }
-    });
 };
 
 module.exports = createUserController;

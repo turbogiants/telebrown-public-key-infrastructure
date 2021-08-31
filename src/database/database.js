@@ -31,14 +31,14 @@ const getUser = async (id) => {
 
 const createUser = async (user) => {
     const newUser = new User(user);
-
     try {
         const result = await newUser.save(function (err) {
             if (err) throw err;
         });
+        logging.debug(NAMESPACE, 'the result', result);
         return {
-            success: result,
-            data: newUser
+            success: true,
+            data: user
         };
     } catch (error) {
         logging.error(NAMESPACE, 'caught error', error);
@@ -55,7 +55,7 @@ const idExists = async (id) => {
 };
 
 const updateExisting = async (id, req) => {
-    return User.findOneAndUpdate({ _id: id }, req.body, function (err, user) {
+    return User.findOneAndUpdate({ _id: id }, req.body, { new: true }, function (err, user) {
         if (err) {
             logging.info(NAMESPACE, 'Error here', err);
         }
