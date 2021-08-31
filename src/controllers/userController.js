@@ -11,7 +11,7 @@ const createUserController = (User) => {
                 throw new Error('This user does not exist in the database');
             }
 
-            return res.status(200).json(user);
+            return emitResponse(res, "Query Success", user);
         } catch (error) {
             logging.error(NAMESPACE, 'caught error', error);
             return res.status(500).json({
@@ -31,15 +31,16 @@ const createUserController = (User) => {
         };
 
         try {
-            // determine if id already exists in the database
-            const exists = await database.idExists(_id);
-            logging.info(NAMESPACE, 'exists boolean var', exists);
-            if (exists) {
-                throw new Error('ID already exists in the database');
+            // determine if id already exists in the database and instead of throwing,
+            // we'll just update the existing, so client side receives the callback.
+            const isExist = await User.idExists(_id);
+            if (isExist) {
+                const result = await User.updateExisting(_id, req);
+                return emitResponse(res, 'User updated successfully', result);
             }
             // save the document to the database
-            const result = await database.createUser(newUser);
-            return res.status(201).json(result);
+            const result = await User.createUser(newUser);
+            return  emitResponse(res, 'User created successfully', result.data);
         } catch (error) {
             return res.status(500).json({
                 success: false,
@@ -53,6 +54,18 @@ const createUserController = (User) => {
         getUser,
         postUser
     };
+};
+
+const emitResponse = (res, message, result) => {
+    return res.status(201).json({
+        success: true,
+        message: message,
+        data: {
+            id: result._id,
+            firstname: result.firstname,
+            lastname: result.lastname
+        }
+    });
 };
 
 module.exports = createUserController;
