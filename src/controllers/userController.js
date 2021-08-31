@@ -2,16 +2,16 @@ const logging = require('../config/logging');
 const NAMESPACE = 'User Controller';
 
 /** Use a function that returns a controller for dependency injections */
-const createUserController = (User) => {
+const createUserController = (database) => {
     const getUser = async (req, res) => {
         try {
-            const user = await User.getUser(req.params.id);
+            const user = await database.getUser(req.params.id);
 
             if (!user) {
                 throw new Error('This user does not exist in the database');
             }
 
-            return emitResponse(res, "Query Success", user);
+            return emitResponse(res, 'Query Success', user);
         } catch (error) {
             logging.error(NAMESPACE, 'caught error', error);
             return res.status(500).json({
@@ -33,14 +33,14 @@ const createUserController = (User) => {
         try {
             // determine if id already exists in the database and instead of throwing,
             // we'll just update the existing, so client side receives the callback.
-            const isExist = await User.idExists(_id);
+            const isExist = await database.idExists(_id);
             if (isExist) {
-                const result = await User.updateExisting(_id, req);
+                const result = await database.updateExisting(_id, req);
                 return emitResponse(res, 'User updated successfully', result);
             }
             // save the document to the database
-            const result = await User.createUser(newUser);
-            return  emitResponse(res, 'User created successfully', result.data);
+            const result = await database.createUser(newUser);
+            return emitResponse(res, 'User created successfully', result.data);
         } catch (error) {
             return res.status(500).json({
                 success: false,

@@ -1,5 +1,4 @@
 const express = require('express');
-const database = require('./database/database');
 const logging = require('./config/logging');
 
 const NAMESPACE = 'App';
