@@ -22,9 +22,7 @@ if (config.mongo.host !== 'none') {
 
 const getUser = async (id) => {
     try {
-        const user = await User.findOne({ _id: id });
-
-        return user;
+        return await User.findOne({ _id: id });
     } catch (error) {
         return null;
     }
@@ -34,11 +32,11 @@ const createUser = async (user) => {
     const newUser = new User(user);
 
     try {
-        const result = await newUser.save(function (err) {
+        const result = await newUser.save(function(err) {
             if (err) throw err;
         });
         return {
-            success: true,
+            success: result,
             data: newUser
         };
     } catch (error) {
@@ -54,8 +52,20 @@ const idExists = async (id) => {
 
     return exists;
 };
+
+const updateExisting = async (id, req) => {
+    return User.findOneAndUpdate({ _id: id }, req.body, function(err, user) {
+            if (err) {
+                logging.info(NAMESPACE, 'Error here', err);
+            }
+            logging.info(NAMESPACE, 'data here', user);
+        }
+    );
+};
+
 module.exports = {
     getUser,
     createUser,
-    idExists
+    idExists,
+    updateExisting
 };
