@@ -31,7 +31,7 @@ const createApp = (database) => {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
 
-        if (req.method == 'OPTIONS') {
+        if (req.method === 'OPTIONS') {
             res.header('Access-Control-Allow-Methods', 'GET POST');
             return res.status(200).json({});
         }
@@ -44,7 +44,7 @@ const createApp = (database) => {
 
     /** Error handling */
     app.use((req, res, next) => {
-        const error = new Error('Not found lol');
+        const error = new Error('Error 404 Not Found');
 
         return res.status(404).json({
             message: error.message
