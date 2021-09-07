@@ -10,12 +10,12 @@ const createUserController = (User) => {
             if (!user) {
                 throw new Error('This user does not exist in the database');
             }
-            
+
             return res.status(201).json({
                 success: true,
                 message: 'Query Success',
                 data: {
-                    id: user._id,
+                    _id: user._id,
                     firstname: user.firstname,
                     lastname: user.lastname
                 }
@@ -48,7 +48,7 @@ const createUserController = (User) => {
                     success: true,
                     message: 'User updated successfully',
                     data: {
-                        id: result._id,
+                        _id: result._id,
                         firstname: result.firstname,
                         lastname: result.lastname
                     }
@@ -61,7 +61,7 @@ const createUserController = (User) => {
                 success: result.test,
                 message: 'User created successfully',
                 data: {
-                    id: data._id,
+                    _id: data._id,
                     firstname: data.firstname,
                     lastname: data.lastname
                 }
