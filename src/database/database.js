@@ -22,20 +22,22 @@ if (config.mongo.host !== 'none') {
 
 const getUser = async (id) => {
     try {
-        return await User.findOne({ _id: id });
+        const user = await User.findOne({ _id: id });
+        return user;
     } catch (error) {
         return null;
     }
 };
 
 const createUser = async (user) => {
+    const newUser = new User(user);
     try {
-        const result = await new User(user).save(function(err) {
+        const result = await newUser.save(function (err) {
             if (err) throw err;
         });
-        logging.debug(NAMESPACE, "the result", result);
+        logging.debug(NAMESPACE, 'the result', result);
         return {
-            test: true,
+            success: true,
             data: user
         };
     } catch (error) {
@@ -53,14 +55,12 @@ const idExists = async (id) => {
 };
 
 const updateExisting = async (id, req) => {
-    return User.findOneAndUpdate({ _id: id }, req.body, { new: true },
-        function(err, user) {
-            if (err) {
-                logging.info(NAMESPACE, 'Error here', err);
-            }
-            logging.info(NAMESPACE, 'data here', user);
+    return User.findOneAndUpdate({ _id: id }, req.body, { new: true }, function (err, user) {
+        if (err) {
+            logging.info(NAMESPACE, 'Error here', err);
         }
-    );
+        logging.info(NAMESPACE, 'data here', user);
+    });
 };
 
 module.exports = {
