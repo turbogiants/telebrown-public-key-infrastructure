@@ -4,3 +4,4 @@ build/
 .env
 *.key
 src/config/keys/*
+.idea
