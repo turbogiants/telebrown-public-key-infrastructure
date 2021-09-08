@@ -2,3 +2,5 @@
 node_modules/
 build/
 .env
+*.key
+src/config/keys/*

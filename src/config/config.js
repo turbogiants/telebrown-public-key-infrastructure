@@ -1,4 +1,6 @@
 const dotenv = require('dotenv');
+const path = require('path');
+const fs = require('fs');
 
 dotenv.config();
 
@@ -34,9 +36,17 @@ const SERVER = {
     port: SERVER_PORT
 };
 
+// keys & tokens
+const KEYS = {
+    private: fs.readFileSync(`${__dirname}\\keys\\private.key`, 'utf-8'),
+    public: fs.readFileSync(`${__dirname}\\keys\\public.key`, 'utf-8'),
+    access_token: process.env.ACCESS_TOKEN
+};
+
 const config = {
     mongo: MONGO,
-    server: SERVER
+    server: SERVER,
+    keys: KEYS
 };
 
 module.exports = config;
