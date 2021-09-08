@@ -138,7 +138,7 @@ describe('POST /create', () => {
             expect(response.statusCode).toBe(403);
         });
 
-        it('should return a json response with a message as a feedback', async () => {
+        it('should return a json response with a message and error object as props', async () => {
             const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
 
             createUser.mockReset();
@@ -150,7 +150,45 @@ describe('POST /create', () => {
 
             const response = await request(app).post('/api/debug/create').send(testData);
 
-            expect(response.body).toEqual({ message: 'Endpoint forbidden. Missing Authorization header.' });
+            expect(response.body).toEqual({
+                message: 'Endpoint forbidden. Missing Authorization header.',
+                error: expect.any(Object)
+            });
+        });
+    });
+
+    describe('when given a request with an invalid Authorization header', () => {
+        it('should return a 403 status code', async () => {
+            const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
+
+            createUser.mockReset();
+            createUser.mockResolvedValue({
+                success: true,
+                message: 'User created successfully',
+                data: testData
+            });
+
+            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer 12345`).send(testData);
+
+            expect(response.statusCode).toBe(403);
+        });
+
+        it('should return a json with a message and the error object as props', async () => {
+            const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
+
+            createUser.mockReset();
+            createUser.mockResolvedValue({
+                success: true,
+                message: 'User created successfully',
+                data: testData
+            });
+
+            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer 12345`).send(testData);
+
+            expect(response.body).toEqual({
+                message: 'Access Token is invalid.',
+                error: expect.any(Object)
+            });
         });
     });
 
@@ -280,19 +318,69 @@ describe('GET /user/:id', () => {
             expect(response.statusCode).toBe(403);
         });
 
-        it('should return a json response with a message as a feedback', async () => {
+        it('should return a json response with a message and the error object as props', async () => {
             const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
 
-            createUser.mockReset();
-            createUser.mockResolvedValue({
+            getUser.mockReset();
+            getUser.mockResolvedValue({
                 success: true,
-                message: 'User created successfully',
-                data: testData
+                message: 'Query Successful',
+                data: {
+                    id: param._id,
+                    firstname: param.firstname,
+                    lastname: param.lastname
+                }
             });
 
             const response = await request(app).post('/api/debug/create').send(testData);
 
-            expect(response.body).toEqual({ message: 'Endpoint forbidden. Missing Authorization header.' });
+            expect(response.body).toEqual({
+                message: 'Endpoint forbidden. Missing Authorization header.',
+                error: expect.any(Object)
+            });
+        });
+    });
+
+    describe('when given a request with an invalid Authorization header', () => {
+        it('should return a 403 status code', async () => {
+            const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
+
+            getUser.mockReset();
+            getUser.mockResolvedValue({
+                success: true,
+                message: 'Query Successful',
+                data: {
+                    id: param._id,
+                    firstname: param.firstname,
+                    lastname: param.lastname
+                }
+            });
+
+            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer 12345`).send(testData);
+
+            expect(response.statusCode).toBe(403);
+        });
+
+        it('should return a json with a message and the error object as props', async () => {
+            const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
+
+            getUser.mockReset();
+            getUser.mockResolvedValue({
+                success: true,
+                message: 'Query Successful',
+                data: {
+                    id: param._id,
+                    firstname: param.firstname,
+                    lastname: param.lastname
+                }
+            });
+
+            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer 12345`).send(testData);
+
+            expect(response.body).toEqual({
+                message: 'Access Token is invalid.',
+                error: expect.any(Object)
+            });
         });
     });
 });

@@ -38,15 +38,29 @@ const createApp = (database) => {
         next();
     });
 
+    app.get('/', (req, res) => {
+        res.status(200).json({ message: 'Welcome to the Index' });
+    });
+
     /** Routes */
     app.use('/api/debug', userRoutes(database));
 
     /** Error handling */
+
+    // 404
     app.use((req, res, next) => {
         const error = new Error('Error 404 Not Found');
+        error.status = 404;
+        next(error);
+    });
 
-        return res.status(404).json({
-            message: error.message
+    // anything else
+    app.use((error, req, res, next) => {
+        res.status(error.status || 500);
+
+        res.json({
+            message: error.message,
+            error: error
         });
     });
 

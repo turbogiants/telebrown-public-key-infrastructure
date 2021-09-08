@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const config = require('../config/config');
 const verifyToken = (req, res, next) => {
     // get auth header
     const bearerHeader = req.headers['authorization'];
@@ -7,11 +8,28 @@ const verifyToken = (req, res, next) => {
         const bearer = bearerHeader.split(' ');
         const bearerToken = bearer[1];
 
-        req.token = bearerToken;
-        next();
+        bearerToken;
+
+        const verifyOptions = {
+            algorithms: ['RS256']
+        };
+
+        jwt.verify(bearerToken, config.keys.public, verifyOptions, (error, decoded) => {
+            // we keep the decoded argument in case we need it later
+            if (error) {
+                error.status = 403;
+                error.message = 'Access Token is invalid.';
+                throw error;
+            } else {
+                next();
+            }
+        });
     } else {
         // forbidden
-        res.status(403).json({ message: 'Endpoint forbidden. Missing Authorization header.' });
+        // throw the error to be caught by error handling middleware
+        const error = new Error('Endpoint forbidden. Missing Authorization header.');
+        error.status = 403;
+        throw error;
     }
 };
 
