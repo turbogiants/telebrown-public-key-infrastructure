@@ -35,11 +35,7 @@ const createUser = async (user) => {
         const result = await newUser.save(function (err) {
             if (err) throw err;
         });
-        logging.debug(NAMESPACE, 'the result', result);
-        return {
-            success: true,
-            data: user
-        };
+        return newUser;
     } catch (error) {
         throw error;
     }
@@ -47,18 +43,15 @@ const createUser = async (user) => {
 
 /** Returns true if id already exists in the collection */
 const idExists = async (id) => {
-    const exists = await User.exists({ _id: id });
-    logging.info(NAMESPACE, 'exists var', exists);
-
-    return exists;
+    return await User.exists({ _id: id });
 };
 
-const updateExisting = async (id, req) => {
-    return User.findOneAndUpdate({ _id: id }, req.body, { new: true }, function (err, user) {
+const updateExisting = async (id, data) => {
+    return await User.findOneAndUpdate({ _id: id }, data, { new: true }, function (err, user) {
         if (err) {
-            logging.info(NAMESPACE, 'Error here', err);
+            logging.error(NAMESPACE, 'Error here', err);
         }
-        logging.info(NAMESPACE, 'data here', user);
+        logging.error(NAMESPACE, 'data here', user);
     });
 };
 

@@ -9,17 +9,20 @@ const testToken = config.keys.access_token;
 // mock functions
 const createUser = jest.fn();
 const getUser = jest.fn();
+const updateExisting = jest.fn();
 const idExists = jest.fn();
 
 const app = createApp({
     createUser,
     getUser,
-    idExists
+    idExists,
+    updateExisting
 });
 
 describe('POST /create', () => {
     beforeEach(() => {
         createUser.mockReset();
+        updateExisting.mockReset();
     });
 
     describe('when given an id, firstname and lastname', () => {
@@ -39,11 +42,7 @@ describe('POST /create', () => {
             for (const body of testData) {
                 // reset mock state before each test
                 createUser.mockReset();
-                createUser.mockResolvedValue({
-                    success: true,
-                    message: 'User created successfully',
-                    data: body
-                });
+                createUser.mockResolvedValue(body);
 
                 // make the request
                 const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
@@ -63,16 +62,11 @@ describe('POST /create', () => {
 
             for (const body of testData) {
                 createUser.mockReset();
-                createUser.mockResolvedValue({
-                    success: true,
-                    message: 'User created successfully',
-                    data: body
-                });
+                createUser.mockResolvedValue(body);
                 idExists.mockResolvedValue(false);
 
                 const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
                 expect(response.body).toEqual({
-                    success: true,
                     message: 'User created successfully',
                     data: {
                         _id: body._id,
@@ -84,33 +78,26 @@ describe('POST /create', () => {
         });
 
         it('should respond with 201 status code', async () => {
-            const body = { _id: 1, firstname: 'john', lastname: 'doe' };
+            const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
 
             createUser.mockReset();
-            createUser.mockResolvedValue({
-                success: true,
-                message: 'User created successfully',
-                data: body
-            });
+            createUser.mockResolvedValue(testData);
             idExists.mockResolvedValue(false);
 
-            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
+            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(testData);
 
             expect(response.statusCode).toBe(201);
         });
 
         it('should specify json in the content type header', async () => {
-            const body = { _id: 1, firstname: 'john', lastname: 'doe' };
+            const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
 
             createUser.mockReset();
-            createUser.mockResolvedValue({
-                success: true,
-                message: 'User created successfully',
-                data: body
-            });
+            createUser.mockResolvedValue(testData);
+            idExists.mockReset();
             idExists.mockResolvedValue(false);
 
-            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
+            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(testData);
 
             expect(response.headers['content-type']).toEqual(expect.stringContaining('json'));
         });
@@ -125,6 +112,7 @@ describe('POST /create', () => {
 
             for (const body of testData) {
                 createUser.mockReset();
+                createUser.mockResolvedValue(body);
 
                 const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
 
@@ -132,12 +120,13 @@ describe('POST /create', () => {
             }
         });
 
-        it('should send a json object with a failed success flag, message and error object', async () => {
+        it('should send a json object with a message and error object', async () => {
             // test data with different composition of invalidity
             const testData = [{}, { firstname: 'john', lastname: 'doe' }, { _id: 1, lastname: 'doe' }, { _id: 1, firstname: 'john' }];
 
             for (const body of testData) {
                 createUser.mockReset();
+                createUser.mockResolvedValue(body);
 
                 const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
 
@@ -150,8 +139,46 @@ describe('POST /create', () => {
     });
     // TODO: when id already exists
     describe('when given an id that already exists', () => {
-        it.todo('should return 422 status code');
-        it.todo('should respond with an object containt success flag, message, and error object');
+        // should return a 200 status code
+        // should respond with a message and the object containing the data
+        it('should return a 200 status code', async () => {
+            const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
+
+            updateExisting.mockReset();
+            updateExisting.mockResolvedValue(testData);
+
+            idExists.mockReset();
+            idExists.mockResolvedValue(true);
+
+            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(testData);
+
+            expect(response.statusCode).toBe(200);
+        });
+
+        it('should respond with a message and the object containing the data', async () => {
+            const testData = [
+                { _id: 1, firstname: 'john', lastname: 'doe' },
+                { _id: 2, firstname: 'jack', lastname: 'roe' },
+                { _id: 3, firstname: 'nice', lastname: 'one' }
+            ];
+
+            for (const body of testData) {
+                updateExisting.mockReset();
+                updateExisting.mockResolvedValue(body);
+                idExists.mockReset();
+                idExists.mockResolvedValue(true);
+
+                const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
+                expect(response.body).toEqual({
+                    message: 'User updated successfully',
+                    data: {
+                        _id: body._id,
+                        firstname: body.firstname,
+                        lastname: body.lastname
+                    }
+                });
+            }
+        });
     });
 
     describe('when given a request with no Authorization header', () => {
@@ -159,11 +186,7 @@ describe('POST /create', () => {
             const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
 
             createUser.mockReset();
-            createUser.mockResolvedValue({
-                success: true,
-                message: 'User created successfully',
-                data: testData
-            });
+            createUser.mockResolvedValue(testData);
 
             const response = await request(app).post('/api/debug/create').send(testData);
 
@@ -174,11 +197,7 @@ describe('POST /create', () => {
             const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
 
             createUser.mockReset();
-            createUser.mockResolvedValue({
-                success: true,
-                message: 'User created successfully',
-                data: testData
-            });
+            createUser.mockResolvedValue(testData);
 
             const response = await request(app).post('/api/debug/create').send(testData);
 
@@ -194,11 +213,7 @@ describe('POST /create', () => {
             const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
 
             createUser.mockReset();
-            createUser.mockResolvedValue({
-                success: true,
-                message: 'User created successfully',
-                data: testData
-            });
+            createUser.mockResolvedValue(testData);
 
             const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer 12345`).send(testData);
 
@@ -209,11 +224,7 @@ describe('POST /create', () => {
             const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
 
             createUser.mockReset();
-            createUser.mockResolvedValue({
-                success: true,
-                message: 'User created successfully',
-                data: testData
-            });
+            createUser.mockResolvedValue(testData);
 
             const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer 12345`).send(testData);
 
@@ -223,8 +234,6 @@ describe('POST /create', () => {
             });
         });
     });
-
-    // TODO: error tests
 });
 
 describe('GET /user/:id', () => {
@@ -245,15 +254,7 @@ describe('GET /user/:id', () => {
 
             for (param of testData) {
                 getUser.mockReset();
-                getUser.mockResolvedValue({
-                    success: true,
-                    message: 'Query Successful',
-                    data: {
-                        id: param._id,
-                        firstname: param.firstname,
-                        lastname: param.lastname
-                    }
-                });
+                getUser.mockResolvedValue(param);
 
                 await request(app).get(`/api/debug/user/${param._id}`).set('Authorization', `Bearer ${testToken}`).send();
 
@@ -270,11 +271,7 @@ describe('GET /user/:id', () => {
 
             for (const param of testData) {
                 getUser.mockReset();
-                getUser.mockResolvedValue({
-                    _id: param._id,
-                    firstname: param.firstname,
-                    lastname: param.lastname
-                });
+                getUser.mockResolvedValue(param);
 
                 const response = await request(app).get(`/api/debug/user/${param._id}`).set('Authorization', `Bearer ${testToken}`).send();
 
@@ -298,11 +295,7 @@ describe('GET /user/:id', () => {
 
             for (const param of testData) {
                 getUser.mockReset();
-                getUser.mockResolvedValue({
-                    _id: param._id,
-                    firstname: param.firstname,
-                    lastname: param.lastname
-                });
+                getUser.mockResolvedValue(param);
 
                 const response = await request(app).get(`/api/debug/user/${param.id}`).set('Authorization', `Bearer ${testToken}`).send();
 
@@ -318,11 +311,7 @@ describe('GET /user/:id', () => {
 
             for (const param of testData) {
                 getUser.mockReset();
-                getUser.mockResolvedValue({
-                    _id: param._id,
-                    firstname: param.firstname,
-                    lastname: param.lastname
-                });
+                getUser.mockResolvedValue(param);
 
                 const response = await request(app).get(`/api/debug/user/${param._id}`).set('Authorization', `Bearer ${testToken}`).send();
 

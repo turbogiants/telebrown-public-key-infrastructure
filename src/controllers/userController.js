@@ -46,9 +46,9 @@ const createUserController = (database) => {
             // we'll just update the existing, so client side receives the callback.
             const isExist = await database.idExists(_id);
             if (isExist) {
-                const result = await database.updateExisting(_id, req);
-                return res.status(201).json({
-                    success: true,
+                const result = await database.updateExisting(_id, newUser);
+                logging.info(NAMESPACE, 'updated user here :', result);
+                return res.status(200).json({
                     message: 'User updated successfully',
                     data: {
                         _id: result._id,
@@ -59,16 +59,12 @@ const createUserController = (database) => {
             }
             // save the document to the database
             const result = await database.createUser(newUser);
-
-            logging.debug(NAMESPACE, 'db res: ', result);
-            const data = result.data;
             return res.status(201).json({
-                success: result.success,
                 message: 'User created successfully',
                 data: {
-                    _id: data._id,
-                    firstname: data.firstname,
-                    lastname: data.lastname
+                    _id: result._id,
+                    firstname: result.firstname,
+                    lastname: result.lastname
                 }
             });
         } catch (error) {
