@@ -3,12 +3,14 @@ const NAMESPACE = 'User Controller';
 
 /** Use a function that returns a controller for dependency injections */
 const createUserController = (database) => {
-    const getUser = async (req, res) => {
+    const getUser = async (req, res, next) => {
         try {
             const user = await database.getUser(req.params.id);
 
             if (!user) {
-                throw new Error('This user does not exist in the database');
+                const error = Error('This user does not exist in the database');
+                error.status = 400;
+                throw error;
             }
 
             return res.status(201).json({
@@ -21,17 +23,12 @@ const createUserController = (database) => {
                 }
             });
         } catch (error) {
-            logging.error(NAMESPACE, 'caught error', error);
-            return res.status(500).json({
-                message: error.message,
-                error
-            });
+            next(error);
         }
     };
 
-    const postUser = async (req, res) => {
+    const postUser = async (req, res, next) => {
         const { _id, firstname, lastname } = req.body;
-
         const newUser = {
             _id,
             firstname,
@@ -39,6 +36,12 @@ const createUserController = (database) => {
         };
 
         try {
+            // verify request body is valid and complete
+            if (!(_id && firstname && lastname)) {
+                const error = new Error('Bad Request. Request body is invalid.');
+                error.status = 400;
+                throw error;
+            }
             // determine if id already exists in the database and instead of throwing,
             // we'll just update the existing, so client side receives the callback.
             const isExist = await database.idExists(_id);
@@ -69,11 +72,7 @@ const createUserController = (database) => {
                 }
             });
         } catch (error) {
-            return res.status(500).json({
-                success: false,
-                message: error.message,
-                error
-            });
+            next(error);
         }
     };
 

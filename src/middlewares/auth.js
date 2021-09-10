@@ -28,7 +28,7 @@ const verifyToken = (req, res, next) => {
         // forbidden
         // throw the error to be caught by error handling middleware
         const error = new Error('Endpoint forbidden. Missing Authorization header.');
-        error.status = 403;
+        error.status = 401;
         throw error;
     }
 };

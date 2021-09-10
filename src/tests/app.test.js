@@ -39,6 +39,11 @@ describe('POST /create', () => {
             for (const body of testData) {
                 // reset mock state before each test
                 createUser.mockReset();
+                createUser.mockResolvedValue({
+                    success: true,
+                    message: 'User created successfully',
+                    data: body
+                });
 
                 // make the request
                 const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
@@ -111,10 +116,37 @@ describe('POST /create', () => {
         });
     });
     // TODO: when body is missing
-    describe('when the id, firstname and lastname is missing', () => {
+    describe('when the id, firstname and/or lastname is missing', () => {
         // should return 400 status code
         // should return error message
-        it.todo('should return 401 status code');
+        it('should return 400 status code', async () => {
+            // test data with different composition of invalidity
+            const testData = [{}, { firstname: 'john', lastname: 'doe' }, { _id: 1, lastname: 'doe' }, { _id: 1, firstname: 'john' }];
+
+            for (const body of testData) {
+                createUser.mockReset();
+
+                const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
+
+                expect(response.statusCode).toBe(400);
+            }
+        });
+
+        it('should send a json object with a failed success flag, message and error object', async () => {
+            // test data with different composition of invalidity
+            const testData = [{}, { firstname: 'john', lastname: 'doe' }, { _id: 1, lastname: 'doe' }, { _id: 1, firstname: 'john' }];
+
+            for (const body of testData) {
+                createUser.mockReset();
+
+                const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
+
+                expect(response.body).toEqual({
+                    message: 'Bad Request. Request body is invalid.',
+                    error: expect.any(Object)
+                });
+            }
+        });
     });
     // TODO: when id already exists
     describe('when given an id that already exists', () => {
@@ -123,7 +155,7 @@ describe('POST /create', () => {
     });
 
     describe('when given a request with no Authorization header', () => {
-        it('should return a 403 status code', async () => {
+        it('should return a 401 status code', async () => {
             const testData = { _id: 1, firstname: 'john', lastname: 'doe' };
 
             createUser.mockReset();
@@ -135,7 +167,7 @@ describe('POST /create', () => {
 
             const response = await request(app).post('/api/debug/create').send(testData);
 
-            expect(response.statusCode).toBe(403);
+            expect(response.statusCode).toBe(401);
         });
 
         it('should return a json response with a message and error object as props', async () => {
@@ -300,7 +332,7 @@ describe('GET /user/:id', () => {
     });
 
     describe('when given a request with no authorization header', () => {
-        it('should respond with a 403 status code', async () => {
+        it('should respond with a 401 status code', async () => {
             const testData = { _id: '12345', firstname: 'aevan', lastname: 'cande' };
             getUser.mockReset();
             getUser.mockResolvedValue({
@@ -315,7 +347,7 @@ describe('GET /user/:id', () => {
 
             const response = await request(app).get(`/api/debug/user/${param._id}`).send(testData);
 
-            expect(response.statusCode).toBe(403);
+            expect(response.statusCode).toBe(401);
         });
 
         it('should return a json response with a message and the error object as props', async () => {

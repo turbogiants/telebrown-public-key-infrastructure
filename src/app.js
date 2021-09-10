@@ -39,7 +39,9 @@ const createApp = (database) => {
     });
 
     app.get('/', (req, res) => {
-        res.status(200).json({ message: 'Welcome to the Index' });
+        const error = new Error('fucky wucky spaghetty');
+        error.status = 469;
+        throw error;
     });
 
     /** Routes */

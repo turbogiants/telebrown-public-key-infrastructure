@@ -41,7 +41,6 @@ const createUser = async (user) => {
             data: user
         };
     } catch (error) {
-        logging.error(NAMESPACE, 'caught error', error);
         throw error;
     }
 };
