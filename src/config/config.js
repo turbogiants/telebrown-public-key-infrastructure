@@ -43,10 +43,16 @@ const KEYS = {
     access_token: process.env.ACCESS_TOKEN
 };
 
+const CERT = {
+    key: fs.readFileSync(`${__dirname}\\cert\\key.pem`),
+    cert: fs.readFileSync(`${__dirname}\\cert\\cert.pem`)
+};
+
 const config = {
     mongo: MONGO,
     server: SERVER,
-    keys: KEYS
+    keys: KEYS,
+    cert: CERT
 };
 
 module.exports = config;

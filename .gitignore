@@ -1,7 +1,12 @@
 # dependencies
 node_modules/
+
+# directories
 build/
+src/config/keys/*
+
+# specific files (keys etc.)
+*.pem
+.idea
 .env
 *.key
-src/config/keys/*
-.idea

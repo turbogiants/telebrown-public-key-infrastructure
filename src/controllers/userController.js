@@ -14,7 +14,6 @@ const createUserController = (database) => {
             }
 
             return res.status(201).json({
-                success: true,
                 message: 'Query Success',
                 data: {
                     _id: user._id,

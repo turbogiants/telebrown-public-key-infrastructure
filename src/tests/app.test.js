@@ -276,7 +276,6 @@ describe('GET /user/:id', () => {
                 const response = await request(app).get(`/api/debug/user/${param._id}`).set('Authorization', `Bearer ${testToken}`).send();
 
                 expect(response.body).toEqual({
-                    success: true,
                     message: 'Query Success',
                     data: {
                         _id: param._id,
@@ -324,17 +323,9 @@ describe('GET /user/:id', () => {
         it('should respond with a 401 status code', async () => {
             const testData = { _id: '12345', firstname: 'aevan', lastname: 'cande' };
             getUser.mockReset();
-            getUser.mockResolvedValue({
-                success: true,
-                message: 'Query Successful',
-                data: {
-                    id: param._id,
-                    firstname: param.firstname,
-                    lastname: param.lastname
-                }
-            });
+            getUser.mockResolvedValue(testData);
 
-            const response = await request(app).get(`/api/debug/user/${param._id}`).send(testData);
+            const response = await request(app).get(`/api/debug/user/${param._id}`).send();
 
             expect(response.statusCode).toBe(401);
         });
