@@ -7,11 +7,13 @@ const createUserRoutes = (database) => {
     const controller = createUserController(database);
     const router = express.Router();
 
-    router.post('/user', auth.verifyToken, controller.postUser);
+    // TODO: add comments
+    router.post('/', auth.verifyToken, controller.postUser);
 
     // router.get('/user/query', auth.verifyToken, controller.queryUsersByName);
 
-    router.get('/user/:id', auth.verifyToken, controller.getUser);
+    // TODO: add comments
+    router.get('/:id', auth.verifyToken, controller.getUser);
 
     return router;
 };

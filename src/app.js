@@ -44,7 +44,7 @@ const createApp = (database) => {
     });
 
     /** Routes */
-    app.use('/api/', userRoutes(database));
+    app.use('/api/user', userRoutes(database));
 
     /** Error handling */
 
