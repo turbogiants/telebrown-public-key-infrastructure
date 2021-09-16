@@ -11,15 +11,17 @@ const createUser = jest.fn();
 const getUser = jest.fn();
 const updateExisting = jest.fn();
 const idExists = jest.fn();
+const getUsersByName = jest.fn();
 
 const app = createApp({
     createUser,
     getUser,
     idExists,
-    updateExisting
+    updateExisting,
+    getUsersByName
 });
 
-describe('POST /create', () => {
+describe('POST /user', () => {
     beforeEach(() => {
         createUser.mockReset();
         updateExisting.mockReset();
@@ -45,7 +47,7 @@ describe('POST /create', () => {
                 createUser.mockResolvedValue(body);
 
                 // make the request
-                const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
+                const response = await request(app).post('/api/user').set('Authorization', `Bearer ${testToken}`).send(body);
 
                 // expectations
                 expect(createUser.mock.calls.length).toBe(1);
@@ -65,7 +67,7 @@ describe('POST /create', () => {
                 createUser.mockResolvedValue(body);
                 idExists.mockResolvedValue(false);
 
-                const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
+                const response = await request(app).post('/api/user').set('Authorization', `Bearer ${testToken}`).send(body);
                 expect(response.body).toEqual({
                     message: 'User created successfully',
                     data: {
@@ -84,7 +86,7 @@ describe('POST /create', () => {
             createUser.mockResolvedValue(testData);
             idExists.mockResolvedValue(false);
 
-            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(testData);
+            const response = await request(app).post('/api/user').set('Authorization', `Bearer ${testToken}`).send(testData);
 
             expect(response.statusCode).toBe(201);
         });
@@ -97,12 +99,11 @@ describe('POST /create', () => {
             idExists.mockReset();
             idExists.mockResolvedValue(false);
 
-            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(testData);
+            const response = await request(app).post('/api/user').set('Authorization', `Bearer ${testToken}`).send(testData);
 
             expect(response.headers['content-type']).toEqual(expect.stringContaining('json'));
         });
     });
-    // TODO: when body is missing
     describe('when the id, firstname and/or lastname is missing', () => {
         // should return 400 status code
         // should return error message
@@ -114,7 +115,7 @@ describe('POST /create', () => {
                 createUser.mockReset();
                 createUser.mockResolvedValue(body);
 
-                const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
+                const response = await request(app).post('/api/user').set('Authorization', `Bearer ${testToken}`).send(body);
 
                 expect(response.statusCode).toBe(400);
             }
@@ -128,7 +129,7 @@ describe('POST /create', () => {
                 createUser.mockReset();
                 createUser.mockResolvedValue(body);
 
-                const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
+                const response = await request(app).post('/api/user').set('Authorization', `Bearer ${testToken}`).send(body);
 
                 expect(response.body).toEqual({
                     message: 'Bad Request. Request body is invalid.',
@@ -137,7 +138,6 @@ describe('POST /create', () => {
             }
         });
     });
-    // TODO: when id already exists
     describe('when given an id that already exists', () => {
         // should return a 200 status code
         // should respond with a message and the object containing the data
@@ -150,7 +150,7 @@ describe('POST /create', () => {
             idExists.mockReset();
             idExists.mockResolvedValue(true);
 
-            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(testData);
+            const response = await request(app).post('/api/user').set('Authorization', `Bearer ${testToken}`).send(testData);
 
             expect(response.statusCode).toBe(200);
         });
@@ -168,7 +168,7 @@ describe('POST /create', () => {
                 idExists.mockReset();
                 idExists.mockResolvedValue(true);
 
-                const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer ${testToken}`).send(body);
+                const response = await request(app).post('/api/user').set('Authorization', `Bearer ${testToken}`).send(body);
                 expect(response.body).toEqual({
                     message: 'User updated successfully',
                     data: {
@@ -188,7 +188,7 @@ describe('POST /create', () => {
             createUser.mockReset();
             createUser.mockResolvedValue(testData);
 
-            const response = await request(app).post('/api/debug/create').send(testData);
+            const response = await request(app).post('/api/user').send(testData);
 
             expect(response.statusCode).toBe(401);
         });
@@ -199,7 +199,7 @@ describe('POST /create', () => {
             createUser.mockReset();
             createUser.mockResolvedValue(testData);
 
-            const response = await request(app).post('/api/debug/create').send(testData);
+            const response = await request(app).post('/api/user').send(testData);
 
             expect(response.body).toEqual({
                 message: 'Endpoint forbidden. Missing Authorization header.',
@@ -215,7 +215,7 @@ describe('POST /create', () => {
             createUser.mockReset();
             createUser.mockResolvedValue(testData);
 
-            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer 12345`).send(testData);
+            const response = await request(app).post('/api/user').set('Authorization', `Bearer 12345`).send(testData);
 
             expect(response.statusCode).toBe(403);
         });
@@ -226,7 +226,7 @@ describe('POST /create', () => {
             createUser.mockReset();
             createUser.mockResolvedValue(testData);
 
-            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer 12345`).send(testData);
+            const response = await request(app).post('/api/user').set('Authorization', `Bearer 12345`).send(testData);
 
             expect(response.body).toEqual({
                 message: 'Access Token is invalid.',
@@ -256,7 +256,7 @@ describe('GET /user/:id', () => {
                 getUser.mockReset();
                 getUser.mockResolvedValue(param);
 
-                await request(app).get(`/api/debug/user/${param._id}`).set('Authorization', `Bearer ${testToken}`).send();
+                await request(app).get(`/api/user/${param._id}`).set('Authorization', `Bearer ${testToken}`).send();
 
                 expect(getUser.mock.calls.length).toBe(1);
                 expect(getUser.mock.calls[0][0]).toEqual(param._id);
@@ -273,7 +273,7 @@ describe('GET /user/:id', () => {
                 getUser.mockReset();
                 getUser.mockResolvedValue(param);
 
-                const response = await request(app).get(`/api/debug/user/${param._id}`).set('Authorization', `Bearer ${testToken}`).send();
+                const response = await request(app).get(`/api/user/${param._id}`).set('Authorization', `Bearer ${testToken}`).send();
 
                 expect(response.body).toEqual({
                     message: 'Query Success',
@@ -296,7 +296,7 @@ describe('GET /user/:id', () => {
                 getUser.mockReset();
                 getUser.mockResolvedValue(param);
 
-                const response = await request(app).get(`/api/debug/user/${param.id}`).set('Authorization', `Bearer ${testToken}`).send();
+                const response = await request(app).get(`/api/user/${param.id}`).set('Authorization', `Bearer ${testToken}`).send();
 
                 expect(response.statusCode).toBe(201);
             }
@@ -312,7 +312,7 @@ describe('GET /user/:id', () => {
                 getUser.mockReset();
                 getUser.mockResolvedValue(param);
 
-                const response = await request(app).get(`/api/debug/user/${param._id}`).set('Authorization', `Bearer ${testToken}`).send();
+                const response = await request(app).get(`/api/user/${param._id}`).set('Authorization', `Bearer ${testToken}`).send();
 
                 expect(response.headers['content-type']).toEqual(expect.stringContaining('json'));
             }
@@ -325,7 +325,7 @@ describe('GET /user/:id', () => {
             getUser.mockReset();
             getUser.mockResolvedValue(testData);
 
-            const response = await request(app).get(`/api/debug/user/${param._id}`).send();
+            const response = await request(app).get(`/api/user/${param._id}`).send();
 
             expect(response.statusCode).toBe(401);
         });
@@ -344,7 +344,7 @@ describe('GET /user/:id', () => {
                 }
             });
 
-            const response = await request(app).post('/api/debug/create').send(testData);
+            const response = await request(app).post('/api/user').send(testData);
 
             expect(response.body).toEqual({
                 message: 'Endpoint forbidden. Missing Authorization header.',
@@ -368,7 +368,7 @@ describe('GET /user/:id', () => {
                 }
             });
 
-            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer 12345`).send(testData);
+            const response = await request(app).post('/api/user').set('Authorization', `Bearer 12345`).send(testData);
 
             expect(response.statusCode).toBe(403);
         });
@@ -387,7 +387,7 @@ describe('GET /user/:id', () => {
                 }
             });
 
-            const response = await request(app).post('/api/debug/create').set('Authorization', `Bearer 12345`).send(testData);
+            const response = await request(app).post('/api/user').set('Authorization', `Bearer 12345`).send(testData);
 
             expect(response.body).toEqual({
                 message: 'Access Token is invalid.',
@@ -396,3 +396,93 @@ describe('GET /user/:id', () => {
         });
     });
 });
+
+// describe('GET /user/query', () => {
+//     beforeEach(() => {
+//         getUsersByName.mockReset();
+//     });
+
+//     describe('when given a valid string of characters', () => {
+//         const testData = ['john doe', 'jack', 'lars'];
+//         const testResolvedValues = [
+//             [{ _id: '12345', firstname: 'john', lastname: 'doe' }],
+//             [
+//                 { _id: '12345', firstname: 'jack', lastname: 'roe' },
+//                 { _id: '12346', firstname: 'jack', lastname: 'black' },
+//                 { _id: '12347', firstname: 'john', lastname: 'jackson' }
+//             ],
+//             [
+//                 { _id: '12345', firstname: 'lars', lastname: 'ulrich' },
+//                 { _id: '12346', firstname: 'lars', lastname: 'alexandersson' },
+//                 { _id: '12347', firstname: 'malars', lastname: 'larams' }
+//             ]
+//         ];
+//         // should fetch from the database
+//         // should respond with a json object containing a message, and a data containing a list of docs
+//         // should return a 200 status code
+//         // should specify json in content type header
+//         it('should fetch from the database', async () => {
+//             for (queryParams of testData) {
+//                 getUsersByName.mockReset();
+//                 // we dont need to resolve value when checking for calls
+//                 // getUsersByName.mockResolvedValue()
+//                 await request(app).get(`/api/user/query`).set('Authorization', `Bearer ${testToken}`).send({ queryParams });
+
+//                 expect(getUsersByName.mock.calls.length).toBe(1);
+//                 expect(getUsersByName.mock.calls[0][0]).toEqual(queryParams);
+//             }
+//         });
+//         it('should respond with a json object containing a message, and a data containing a list of docs', async () => {
+//             let queryParams = '';
+//             let resolvedVal = [];
+
+//             for (let i = 0; i < testData.length; i++) {
+//                 // set testData and test result
+//                 queryParams = testData[i];
+//                 resolvedVal = testResolvedValues[i];
+
+//                 getUsersByName.mockReset();
+//                 getUsersByName.mockResolvedValue(resolvedVal);
+//                 const response = await request(app).get(`/api/user/query`).set('Authorization', `Bearer ${testToken}`).send({ queryParams });
+
+//                 expect(response.body).toEqual({
+//                     message: 'Query Success',
+//                     data: resolvedVal
+//                 });
+//             }
+//         });
+//         it('should return a 200 status code', async () => {
+//             let queryParams = '';
+//             let resolvedVal = [];
+
+//             for (let i = 0; i < testData.length; i++) {
+//                 // set testData and test result
+//                 queryParams = testData[i];
+//                 resolvedVal = testResolvedValues[i];
+
+//                 getUsersByName.mockReset();
+//                 getUsersByName.mockResolvedValue(resolvedVal);
+//                 const response = await request(app).get(`/api/user/query`).set('Authorization', `Bearer ${testToken}`).send({ queryParams });
+
+//                 expect(response.statusCode).toBe(200);
+//             }
+//         });
+
+//         it('should specify json in content type header', async () => {
+//             let queryParams = '';
+//             let resolvedVal = [];
+
+//             for (let i = 0; i < testData.length; i++) {
+//                 // set testData and test result
+//                 queryParams = testData[i];
+//                 resolvedVal = testResolvedValues[i];
+
+//                 getUsersByName.mockReset();
+//                 getUsersByName.mockResolvedValue(resolvedVal);
+//                 const response = await request(app).get(`/api/user/query`).set('Authorization', `Bearer ${testToken}`).send({ queryParams });
+
+//                 expect(response.headers['content-type']).toEqual(expect.stringContaining('json'));
+//             }
+//         });
+//     });
+// });

@@ -7,7 +7,9 @@ const createUserRoutes = (database) => {
     const controller = createUserController(database);
     const router = express.Router();
 
-    router.post('/create', auth.verifyToken, controller.postUser);
+    router.post('/user', auth.verifyToken, controller.postUser);
+
+    // router.get('/user/query', auth.verifyToken, controller.queryUsersByName);
 
     router.get('/user/:id', auth.verifyToken, controller.getUser);
 

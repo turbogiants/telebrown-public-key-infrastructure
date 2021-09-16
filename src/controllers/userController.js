@@ -71,9 +71,31 @@ const createUserController = (database) => {
         }
     };
 
+    const queryUsersByName = async (req, res, next) => {
+        const { queryParams } = req.body;
+
+        try {
+            const result = await database.getUsersByName(queryParams);
+
+            if (!result) {
+                const error = Error('No match found in the database.');
+                error.status = 400;
+                throw error;
+            }
+
+            return res.status(200).json({
+                message: 'Query Success',
+                data: result
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
     return {
         getUser,
-        postUser
+        postUser,
+        queryUsersByName
     };
 };
 

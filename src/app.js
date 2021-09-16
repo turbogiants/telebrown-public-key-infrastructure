@@ -26,7 +26,6 @@ const createApp = (database) => {
 
     /** Rules of the API */
     app.use((req, res, next) => {
-        // TODO: handle unauthorized access
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
 
@@ -39,13 +38,13 @@ const createApp = (database) => {
     });
 
     app.get('/', (req, res) => {
-        const error = new Error('fucky wucky spaghetty');
+        const error = new Error('Test error');
         error.status = 469;
         throw error;
     });
 
     /** Routes */
-    app.use('/api/debug', userRoutes(database));
+    app.use('/api/', userRoutes(database));
 
     /** Error handling */
 

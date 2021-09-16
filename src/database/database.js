@@ -54,10 +54,19 @@ const updateExisting = async (id, data) => {
         logging.error(NAMESPACE, 'data here', user);
     });
 };
+// TODO: finish this function lol
+const getUsersByName = async (queryParams) => {
+    return [
+        { _id: '12345', firstname: 'aevan', lastname: 'cande' },
+        { _id: '12346', firstname: 'john', lastname: 'doe' },
+        { _id: '12347', firstname: 'jack', lastname: 'roe' }
+    ];
+};
 
 module.exports = {
     getUser,
     createUser,
     idExists,
-    updateExisting
+    updateExisting,
+    getUsersByName
 };
