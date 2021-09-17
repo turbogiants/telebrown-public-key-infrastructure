@@ -20,6 +20,8 @@ if (config.mongo.host !== 'none') {
         });
 }
 
+/** User functions */
+
 const getUser = async (id) => {
     try {
         const user = await User.findOne({ _id: id });
@@ -62,6 +64,8 @@ const getUsersByName = async (queryParams) => {
         { _id: '12347', firstname: 'jack', lastname: 'roe' }
     ];
 };
+
+/** Key functions */
 
 module.exports = {
     getUser,

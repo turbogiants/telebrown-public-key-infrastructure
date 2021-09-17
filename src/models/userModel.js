@@ -5,7 +5,8 @@ const User = new Schema(
     {
         _id: { type: String, required: true },
         firstname: { type: String, required: true },
-        lastname: { type: String, required: false }
+        lastname: { type: String, required: false },
+        public_key: { type: String, require: false }
     },
     {
         timestamps: true

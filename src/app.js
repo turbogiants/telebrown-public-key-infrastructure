@@ -7,6 +7,7 @@ const NAMESPACE = 'App';
 const createApp = (database) => {
     // route import
     const userRoutes = require('./routes/userRoutes');
+    const keyRoutes = require('./routes/keyRoutes');
     const app = express();
 
     /** Logging the request */
@@ -44,7 +45,12 @@ const createApp = (database) => {
     });
 
     /** Routes */
+
+    // User routes
     app.use('/api/user', userRoutes(database));
+
+    // Key Routes
+    app.use('/api/key', keyRoutes(database));
 
     /** Error handling */
 
