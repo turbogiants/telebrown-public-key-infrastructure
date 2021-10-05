@@ -18,7 +18,9 @@ const createUserController = (database) => {
                 data: {
                     _id: user._id,
                     firstname: user.firstname,
-                    lastname: user.lastname
+                    lastname: user.lastname,
+                    stock_icon: result.stock_icon,
+                    profile_url: result.profile_url
                 }
             });
         } catch (error) {
@@ -27,11 +29,13 @@ const createUserController = (database) => {
     };
 
     const postUser = async (req, res, next) => {
-        const { _id, firstname, lastname } = req.body;
+        const { _id, firstname, lastname, stock_icon, profile_url } = req.body;
         const newUser = {
             _id,
             firstname,
-            lastname
+            lastname,
+            stock_icon,
+            profile_url
         };
 
         try {
@@ -52,7 +56,9 @@ const createUserController = (database) => {
                     data: {
                         _id: result._id,
                         firstname: result.firstname,
-                        lastname: result.lastname
+                        lastname: result.lastname,
+                        stock_icon: result.stock_icon,
+                        profile_url: result.profile_url
                     }
                 });
             }
@@ -63,7 +69,9 @@ const createUserController = (database) => {
                 data: {
                     _id: result._id,
                     firstname: result.firstname,
-                    lastname: result.lastname
+                    lastname: result.lastname,
+                    stock_icon: result.stock_icon,
+                    profile_url: result.profile_url
                 }
             });
         } catch (error) {
