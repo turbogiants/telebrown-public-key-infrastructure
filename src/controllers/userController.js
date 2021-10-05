@@ -8,7 +8,7 @@ const createUserController = (database) => {
             const user = await database.getUser(req.params.id);
 
             if (!user) {
-                const error = Error('This user does not exist in the database');
+                const error = Error('This user does not exist in the database.');
                 error.status = 400;
                 throw error;
             }
@@ -70,27 +70,6 @@ const createUserController = (database) => {
             next(error);
         }
     };
-
-    // const queryUsersByName = async (req, res, next) => {
-    //     const { queryParams } = req.body;
-
-    //     try {
-    //         const result = await database.getUsersByName(queryParams);
-
-    //         if (!result) {
-    //             const error = Error('No match found in the database.');
-    //             error.status = 400;
-    //             throw error;
-    //         }
-
-    //         return res.status(200).json({
-    //             message: 'Query Success',
-    //             data: result
-    //         });
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // };
 
     return {
         getUser,

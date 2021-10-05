@@ -7,8 +7,7 @@ const NAMESPACE = 'Key Test';
 const testToken = config.keys.access_token;
 
 // mock functions
-const idExists = jest.fn();
-const updatePublicKey = jest.fn();
+const { idExists, updatePublicKey } = require('./mockDatabase');
 
 const app = createApp({
     idExists,
@@ -33,9 +32,9 @@ describe('POST /key', () => {
 
         // test body
         const testData = [
-            { _id: '1', public_key: '1234567812345678' },
-            { _id: '2', public_key: '2345678923456789' },
-            { _id: '3', public_key: '3456789123456789' }
+            { _id: '1234567812345678', public_key: 'pubkey' },
+            { _id: '2345678923456789', public_key: 'pubkey' },
+            { _id: '3456789123456789', public_key: 'pubkey' }
         ];
 
         it('should save to database', async () => {
@@ -116,23 +115,23 @@ describe('POST /key', () => {
         });
     });
 
-    describe('when given an invalid key', () => {
+    describe('when given an invalid id', () => {
         // should return status code 400 bad request
         // should return a json object with message and error object
 
         // test body
         const testData = [
             {
-                _id: 1,
-                public_key: 'abce1234fghi4567' // key is not numeric
+                _id: 'abce1234fghi4567', // key is not numeric
+                public_key: 'pubkey'
             },
             {
-                _id: 1,
-                public_key: '123456789123456' // key is not 16 length
+                _id: '123456789123456', // key is not 16 length
+                public_key: 'pubkey'
             },
             {
-                _id: 1,
-                public_key: 12345 // key is not a string
+                _id: 12345, // key is not a string
+                public_key: 'pubkey'
             }
         ];
 
@@ -161,7 +160,7 @@ describe('POST /key', () => {
 
                 // expect
                 expect(response.body).toEqual({
-                    message: 'Public Key is invalid.',
+                    message: 'User ID is invalid.',
                     error: expect.any(Object)
                 });
             }
@@ -174,8 +173,8 @@ describe('POST /key', () => {
 
         // test data
         const testData = {
-            _id: '1',
-            public_key: '1234567891234567'
+            _id: '1234567891234567',
+            public_key: 'pubkey'
         };
 
         it('should return status code 400', async () => {

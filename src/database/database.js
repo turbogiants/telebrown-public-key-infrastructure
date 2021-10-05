@@ -56,13 +56,14 @@ const updateExisting = async (id, data) => {
         logging.error(NAMESPACE, 'data here', user);
     });
 };
-// TODO: finish this function lol
-const getUsersByName = async (queryParams) => {
-    return [
-        { _id: '12345', firstname: 'aevan', lastname: 'cande' },
-        { _id: '12346', firstname: 'john', lastname: 'doe' },
-        { _id: '12347', firstname: 'jack', lastname: 'roe' }
-    ];
+
+// TODO: finish
+const updatePublicKey = async (_id, public_key) => {
+    return { _id: '12345', public_key: 'pubkey' };
+};
+
+const getPublicKey = async (_id) => {
+    return 'pubkey';
 };
 
 /** Key functions */
@@ -72,5 +73,5 @@ module.exports = {
     createUser,
     idExists,
     updateExisting,
-    getUsersByName
+    updatePublicKey
 };
