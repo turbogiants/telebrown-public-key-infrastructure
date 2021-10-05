@@ -19,8 +19,8 @@ const createUserController = (database) => {
                     _id: user._id,
                     firstname: user.firstname,
                     lastname: user.lastname,
-                    stock_icon: result.stock_icon,
-                    profile_url: result.profile_url
+                    stock_icon: user.stock_icon,
+                    profile_url: user.profile_url
                 }
             });
         } catch (error) {
@@ -50,6 +50,7 @@ const createUserController = (database) => {
             const isExist = await database.idExists(_id);
             if (isExist) {
                 const result = await database.updateExisting(_id, newUser);
+
                 logging.info(NAMESPACE, 'updated user here :', result);
                 return res.status(200).json({
                     message: 'User updated successfully',
