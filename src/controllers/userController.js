@@ -45,9 +45,9 @@ const createUserController = (database) => {
                 error.status = 400;
                 res.status(400).json({
                     message: 'Bad Request. User request body is invalid.',
-                    data: {},
                     status: 400,
-                    success: false
+                    success: false,
+                    error
                 });
                 throw error;
             }

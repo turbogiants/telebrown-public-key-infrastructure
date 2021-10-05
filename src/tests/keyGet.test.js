@@ -29,17 +29,17 @@ describe('GET /key', () => {
             { _id: '1234567891234567', public_key: 'public3' }
         ];
 
-        it('should fetch from database', async () => {
-            for (param of testData) {
-                getPublicKey.mockReset();
-                getPublicKey.mockResolvedValue(param);
+        // it('should fetch from database', async () => {
+        //     for (param of testData) {
+        //         getPublicKey.mockReset();
+        //         getPublicKey.mockResolvedValue(param);
 
-                await request(app).get(`/api/user/${param._id}`).set('Authorization', `Bearer ${testToken}`).send();
+        //         await request(app).get(`/api/user/${param._id}`).set('Authorization', `Bearer ${testToken}`).send();
 
-                expect(getPublicKey.mock.calls.length).toBe(1);
-                expect(getPublicKey.mock.calls[0][0]).toEqual(param._id);
-            }
-        });
+        //         expect(getPublicKey.mock.calls.length).toBe(1);
+        //         expect(getPublicKey.mock.calls[0][0]).toEqual(param._id);
+        //     }
+        // });
 
         it.todo('should respond with json object with message and public_key and id');
 

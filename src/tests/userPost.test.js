@@ -59,6 +59,8 @@ describe('POST /user', () => {
 
                 const response = await request(app).post('/api/user').set('Authorization', `Bearer ${testToken}`).send(body);
                 expect(response.body).toEqual({
+                    status: 201,
+                    success: true,
                     message: 'User created successfully',
                     data: {
                         _id: body._id,
@@ -95,12 +97,12 @@ describe('POST /user', () => {
         });
     });
 
-    describe('when the id, firstname and/or lastname is missing', () => {
+    describe('when the id, firstname is missing', () => {
         // should return 400 status code
         // should return error message
 
         // test data with different composition of invalidity
-        const testData = [{}, { firstname: 'john', lastname: 'doe' }, { _id: '1234567891234567', lastname: 'doe' }, { _id: '1234567891234567', firstname: 'john' }];
+        const testData = [{}, { firstname: 'john', lastname: 'doe' }, { _id: '1234567891234567', lastname: 'doe' }];
 
         it('should return 400 status code', async () => {
             for (const body of testData) {
@@ -121,7 +123,9 @@ describe('POST /user', () => {
                 const response = await request(app).post('/api/user').set('Authorization', `Bearer ${testToken}`).send(body);
 
                 expect(response.body).toEqual({
-                    message: 'Bad Request. Request body is invalid.',
+                    status: 400,
+                    success: false,
+                    message: 'Bad Request. User request body is invalid.',
                     error: expect.any(Object)
                 });
             }
@@ -161,6 +165,8 @@ describe('POST /user', () => {
                 const response = await request(app).post('/api/user').set('Authorization', `Bearer ${testToken}`).send(body);
                 expect(response.body).toEqual({
                     message: 'User updated successfully',
+                    status: 200,
+                    success: true,
                     data: {
                         _id: body._id,
                         firstname: body.firstname,
