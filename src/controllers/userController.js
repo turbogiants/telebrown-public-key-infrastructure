@@ -40,9 +40,15 @@ const createUserController = (database) => {
 
         try {
             // verify request body is valid and complete
-            if (!(_id && firstname && lastname)) {
+            if (!(_id && firstname)) {
                 const error = new Error('Bad Request. Request body is invalid.');
                 error.status = 400;
+                res.status(400).json({
+                    message: 'Bad Request. User request body is invalid.',
+                    data: {},
+                    status: 400,
+                    success: false
+                });
                 throw error;
             }
             // determine if id already exists in the database and instead of throwing,
@@ -50,8 +56,7 @@ const createUserController = (database) => {
             const isExist = await database.idExists(_id);
             if (isExist) {
                 const result = await database.updateExisting(_id, newUser);
-
-                logging.info(NAMESPACE, 'updated user here :', result);
+                logging.info(NAMESPACE, 'Updated user here :', result);
                 return res.status(200).json({
                     message: 'User updated successfully',
                     data: {
@@ -60,7 +65,9 @@ const createUserController = (database) => {
                         lastname: result.lastname,
                         stock_icon: result.stock_icon,
                         profile_url: result.profile_url
-                    }
+                    },
+                    status: 200,
+                    success: true
                 });
             }
             // save the document to the database
@@ -73,7 +80,9 @@ const createUserController = (database) => {
                     lastname: result.lastname,
                     stock_icon: result.stock_icon,
                     profile_url: result.profile_url
-                }
+                },
+                status: 201,
+                success: true
             });
         } catch (error) {
             next(error);
