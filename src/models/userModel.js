@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const keySchema = require('./keySchema');
 
 const User = new Schema(
     {
@@ -8,7 +9,10 @@ const User = new Schema(
         lastname: { type: String, required: false },
         public_key: { type: String, require: false },
         stock_icon: { type: Number, required: false },
-        profile_url: { type: String, required: false }
+        profile_url: { type: String, required: false },
+
+        // encryption keys
+        keys: [keySchema]
     },
     {
         timestamps: true
