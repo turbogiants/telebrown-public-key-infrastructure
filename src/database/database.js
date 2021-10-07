@@ -58,8 +58,18 @@ const updateExisting = async (id, data) => {
 };
 
 // TODO: finish
-const updatePublicKey = async (_id, public_key) => {
-    return { _id: '12345', public_key: 'pubkey' };
+const postKey = async (_id, public_key) => {
+    // update
+    const update = { key: public_key };
+
+    const user = await User.findByIdAndUpdate(_id, update);
+
+    logging.debug(NAMESPACE, 'user: ', user);
+    if (!user) {
+        return false;
+    }
+
+    return true;
 };
 
 const getPublicKey = async (_id) => {
@@ -73,5 +83,5 @@ module.exports = {
     createUser,
     idExists,
     updateExisting,
-    updatePublicKey
+    postKey
 };
