@@ -73,6 +73,8 @@ const postKey = async (_id, public_key) => {
 
 const getKey = async (_id) => {
     // get key
+
+    // TODO: omg please change this. this is terrible code
     const result = await User.findById(_id, 'key');
 
     const preKey = result.key.preKeys[0];
