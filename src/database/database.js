@@ -64,7 +64,6 @@ const postKey = async (_id, public_key) => {
 
     const user = await User.findByIdAndUpdate(_id, update);
 
-    logging.debug(NAMESPACE, 'user: ', user);
     if (!user) {
         return false;
     }
@@ -72,8 +71,33 @@ const postKey = async (_id, public_key) => {
     return true;
 };
 
-const getPublicKey = async (_id) => {
-    return 'pubkey';
+const getKey = async (_id) => {
+    // get key
+    const result = await User.findById(_id, 'key');
+
+    const preKey = result.key.preKeys[0];
+
+    await User.updateOne(
+        { _id },
+        {
+            $pull: {
+                'key.preKeys': preKey
+            }
+        }
+    );
+
+    const key = {
+        deviceId: result.key.deviceId,
+        preKeyId: result.key.preKeyId,
+        preKey,
+        publicKey: result.key.publicKey,
+        registrationId: result.key.registrationId,
+        signature: result.key.signature,
+        signedKeyId: result.key.signedKeyId,
+        signedPreKey: result.key.signedPreKey
+    };
+
+    return key;
 };
 
 /** Key functions */
@@ -83,5 +107,6 @@ module.exports = {
     createUser,
     idExists,
     updateExisting,
-    postKey
+    postKey,
+    getKey
 };

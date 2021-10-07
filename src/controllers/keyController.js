@@ -24,10 +24,18 @@ const idIsValid = (key) => {
 /** Use a function that returns a controller for dependency injections */
 const createKeyController = (database) => {
     const getKey = async (req, res, next) => {
+        const { id } = req.params;
         try {
-            const error = new Error('Endpoint not implemented.');
-            error.status = 404;
-            throw error;
+            const key = await database.getKey(id);
+
+            res.json({
+                message: 'Query Success.',
+                status: 200,
+                success: true,
+                data: {
+                    key
+                }
+            });
         } catch (error) {
             next(error);
         }
