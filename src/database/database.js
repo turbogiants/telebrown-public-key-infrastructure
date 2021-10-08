@@ -60,12 +60,7 @@ const postKey = async (_id, public_key) => {
     // update
     const update = { key: public_key };
 
-    const user = await User.findByIdAndUpdate(_id, update);
-
-    if (!user) {
-        return false;
-    }
-
+    const user = await User.findByIdAndUpdate(_id, update, { runValidators: true });
     return true;
 };
 
@@ -75,7 +70,9 @@ const getKey = async (_id) => {
     // TODO: omg please change this. this is terrible code
     const result = await User.findById(_id, 'key');
 
-    const preKey = result.key.preKeys[0];
+    logging.info(NAMESPACE, 'result: ', result);
+
+    const preKey = result.key.pre_keys[0];
 
     await User.updateOne(
         { _id },
@@ -87,14 +84,14 @@ const getKey = async (_id) => {
     );
 
     const key = {
-        deviceId: result.key.deviceId,
-        preKeyId: result.key.preKeyId,
-        preKey,
-        publicKey: result.key.publicKey,
-        registrationId: result.key.registrationId,
+        device_id: result.key.device_id,
+        pre_key_id: result.key.pre_key_id,
+        pre_key: preKey,
+        identity_key: result.key.identity_key,
+        registration_id: result.key.registration_id,
         signature: result.key.signature,
-        signedKeyId: result.key.signedKeyId,
-        signedPreKey: result.key.signedPreKey
+        signed_key_id: result.key.signed_key_id,
+        signed_pre_key: result.key.signed_pre_key
     };
 
     return key;

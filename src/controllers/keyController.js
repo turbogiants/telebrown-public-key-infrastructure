@@ -3,24 +3,6 @@ const NAMESPACE = 'Key Controller';
 
 /** helper functions */
 
-// check if key is a valid public key
-const idIsValid = (key) => {
-    // check if key is a string
-    if (typeof key !== 'string') {
-        return false;
-    }
-    // check if key is length 16
-    if (key.length !== 16) {
-        return false;
-    }
-    // check if key is numeric
-    if (isNaN(key)) {
-        return false;
-    }
-
-    return true;
-};
-
 /** Use a function that returns a controller for dependency injections */
 const createKeyController = (database) => {
     const getKey = async (req, res, next) => {
