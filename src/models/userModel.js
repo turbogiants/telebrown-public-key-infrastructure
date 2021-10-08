@@ -11,7 +11,7 @@ const User = new Schema(
         profile_url: { type: String, required: false },
 
         // encryption keys
-        key: keySchema
+        key: { type: keySchema }
     },
     {
         timestamps: true
