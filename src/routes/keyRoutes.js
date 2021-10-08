@@ -9,7 +9,7 @@ const createKeyRoutes = (database) => {
     const router = express.Router();
 
     // TODO: add comments
-    router.post('/', auth.verifyToken, controller.postKey);
+    router.post('/:id', auth.verifyToken, controller.postKey);
 
     // TODO: add comments
     router.get('/:id', auth.verifyToken, controller.getKey);

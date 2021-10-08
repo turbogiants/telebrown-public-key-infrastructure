@@ -42,10 +42,11 @@ const createKeyController = (database) => {
     };
 
     const postKey = async (req, res, next) => {
-        const { _id, public_key } = req.body;
+        const public_key = req.body;
+        const { id } = req.params;
 
         try {
-            const success = await database.postKey(_id, public_key);
+            const success = await database.postKey(id, public_key);
 
             if (success) {
                 res.status(201).json({
