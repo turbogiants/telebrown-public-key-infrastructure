@@ -34,9 +34,7 @@ const getUser = async (id) => {
 const createUser = async (user) => {
     const newUser = new User(user);
     try {
-        const result = await newUser.save(function (err) {
-            if (err) throw err;
-        });
+        const result = await newUser.save();
         return newUser;
     } catch (error) {
         throw error;

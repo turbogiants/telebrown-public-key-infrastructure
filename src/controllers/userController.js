@@ -43,13 +43,12 @@ const createUserController = (database) => {
             if (!(_id && firstname)) {
                 const error = new Error('Bad Request. Request body is invalid.');
                 error.status = 400;
-                res.status(400).json({
+                return res.status(400).json({
                     message: 'Bad Request. User request body is invalid.',
                     status: 400,
                     success: false,
                     error
                 });
-                throw error;
             }
             // determine if id already exists in the database and instead of throwing,
             // we'll just update the existing, so client side receives the callback.
@@ -72,6 +71,7 @@ const createUserController = (database) => {
             }
             // save the document to the database
             const result = await database.createUser(newUser);
+
             return res.status(201).json({
                 message: 'User created successfully',
                 data: {
