@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const keySchema = Schema(
     {
         device_id: { type: Number, required: true },
-        pre_key_Id: { type: Number, required: true },
+        pre_key_id: { type: Number, required: true },
         pre_keys: [{ type: String, required: true }],
         identity_key: { type: String, required: true },
         registration_id: { type: Number, required: true },
