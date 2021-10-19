@@ -66,35 +66,47 @@ const postKey = async (_id, public_key) => {
 
 const getKey = async (_id) => {
     // get key
+    const result = await User.findById(_id, 'key').map((res) => {
+        if (res == null) {
+            return res;
+        }
 
-    // TODO: omg please change this. this is terrible code
-    const result = await User.findById(_id, 'key');
+        // check if pre keys exist
+        if (res.key.pre_keys.length == 0) {
+            const error = new Error('There no more pre keys left.');
+            error.status = 500;
+            throw error;
+        }
 
-    logging.info(NAMESPACE, 'result: ', result);
+        return {
+            device_id: res.key.device_id,
+            pre_key_id: res.key.pre_key_id,
+            pre_key: res.key.pre_keys[0],
+            identity_key: res.key.identity_key,
+            registration_id: res.key.registration_id,
+            signature: res.key.signature,
+            signed_key_id: res.key.signed_key_id,
+            signed_pre_key: res.key.signed_pre_key
+        };
+    });
 
-    const preKey = result.key.pre_keys[0];
+    if (result === null) {
+        const error = new Error('This user does not exist.');
+        error.status = 400;
+        throw error;
+    }
+
+    const preKey = result.pre_key;
 
     await User.updateOne(
         { _id },
         {
             $pull: {
-                'key.preKeys': preKey
+                'key.pre_keys': preKey
             }
         }
     );
-
-    const key = {
-        device_id: result.key.device_id,
-        pre_key_id: result.key.pre_key_id,
-        pre_key: preKey,
-        identity_key: result.key.identity_key,
-        registration_id: result.key.registration_id,
-        signature: result.key.signature,
-        signed_key_id: result.key.signed_key_id,
-        signed_pre_key: result.key.signed_pre_key
-    };
-
-    return key;
+    return result;
 };
 
 /** Key functions */
