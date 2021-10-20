@@ -10,6 +10,10 @@
   },
   "author": "Aevan Candelaria",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/turbogiants/telebrown-public-key-infrastructure.git"
+  },
   "dependencies": {
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
