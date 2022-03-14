@@ -29,7 +29,7 @@ const MONGO = {
 
 // server config
 const SERVER_HOSTNAME = process.env.SERVER_HOSTNAME || 'localhost';
-const SERVER_PORT = process.env.SERVER_PORT || 5000;
+const SERVER_PORT = process.env.SERVER_PORT || 8080;
 
 const SERVER = {
     hostname: SERVER_HOSTNAME,
@@ -38,8 +38,8 @@ const SERVER = {
 
 // keys & tokens
 const KEYS = {
-    private: fs.readFileSync(`${__dirname}\\keys\\private.key`, 'utf-8'),
-    public: fs.readFileSync(`${__dirname}\\keys\\public.key`, 'utf-8'),
+    private: fs.readFileSync(`${__dirname}/keys/private.key`, 'utf-8'),
+    public: fs.readFileSync(`${__dirname}/keys/public.key`, 'utf-8'),
     access_token: process.env.ACCESS_TOKEN
 };
 

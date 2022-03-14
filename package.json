@@ -5,8 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "build": "rm -rf build/ && prettier --write src/ && tsc",
-    "start": "nodemon src/server.js",
-    "serve": "node src/server.js",
+    "start": "node src/server.js",
     "test": "jest --verbose --silent --detectOpenHandles"
   },
   "author": "Aevan Candelaria",
